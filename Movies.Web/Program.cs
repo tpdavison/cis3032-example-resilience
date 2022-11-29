@@ -30,7 +30,13 @@ builder.Services.AddDbContext<MoviesContext>(options =>
     else
     {
         var cs = builder.Configuration.GetConnectionString("MoviesContext");
-        options.UseSqlServer(cs);
+        options.UseSqlServer(cs, sqlServerOptionsAction: sqlOptions =>
+            sqlOptions.EnableRetryOnFailure(
+                maxRetryCount: 5,
+                maxRetryDelay: TimeSpan.FromSeconds(6),
+                errorNumbersToAdd: null
+            )
+        );
     }
 });
 
